@@ -1,0 +1,22 @@
+# CD for AWS CDK project based on AWS CodeBuild (https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html)
+version: 0.2
+    
+phases:   
+  install:
+    runtime-versions:
+      nodejs: 12
+      
+  pre_build:
+    commands:
+      - npm install -g aws-cdk
+      - cdk doctor
+      - cd backend/aws-cdk
+      - npm install
+      
+  build:
+    commands:
+      - npm run build
+      
+  post_build:
+    commands:
+      - cdk deploy "*-$ENV_NAME" --require-approval never
