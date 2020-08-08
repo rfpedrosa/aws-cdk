@@ -7,7 +7,7 @@ This is an [project template for an app with multiple stacks](https://docs.aws.a
 1. Multi regions and multi aws accounts. [Prod environment may be deployed to a different AWS (sub) account for higher resource isolation](https://aws.amazon.com/blogs/mt/best-practices-for-organizational-units-with-aws-organizations/)
 2. With cost optimizations (ex: no NAT Gateways are needed in a test environment as database & applicational layer is public accessible)
 3. [Network stack](lib/network-stack.ts) with public (ex: for load balanceds), private (ex: for servers) and isolated (ex: for databases) subnets
-4. [Compute stack](lib/compute-stack.ts) based on [AWS EB - 64bit Amazon Linux 2 v1.0.0 running .NET Core platform](https://aws.amazon.com/blogs/developer/aws-elastic-beanstalk-adds-net-core-on-linux-platform/). Suitable to run [Asp.net Core web projects](https://dotnet.microsoft.com/learn/aspnet/what-is-aspnet-core) and easily changeable to support a different AWS EB platform
+4. [Compute stack](lib/compute-stack.ts) based on [latest version of .NET Core on Linux platform for AWS Elastic Beanstalk](https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html#platforms-supported.dotnetlinux). Suitable to run [Asp.net Core web projects](https://dotnet.microsoft.com/learn/aspnet/what-is-aspnet-core) and easily changeable to support a different AWS EB platform
 5. [Database stack](lib/database-stack.ts) AWS RDS Aurora Postgres DB placed in Isolated subnet for production but accessible from application subnet
 6. [Authentication stack](lib/authentication-stack.ts) AWS Cognito setup
 7. [Users stack](lib/users-stack.ts) for applicational AWS IAM users (programatic access)
