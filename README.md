@@ -15,6 +15,7 @@ This is an [project template for an app with multiple stacks](https://docs.aws.a
 # Getting started
 
 1. Set app:XXX context variables with your own values on [`cdk.json`](cdk.json) file
+2. Create a [aws-elasticbeanstalk-ec2-role](https://github.com/rfpedrosa/aws-cdk/blob/master/lib/compute-stack.ts#L41) & [aws-elasticbeanstalk-service-role](https://github.com/rfpedrosa/aws-cdk/blob/master/lib/compute-stack.ts#L63). Tip: [AWS EB create those roles automatically](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts-roles.html) if you can an example app.
 2. [Bootstrap cdk](https://docs.aws.amazon.com/cdk/latest/guide/cli.html#cli-bootstrap)
 3. The [`cdk.json`](cdk.json) file tells the CDK Toolkit how to execute your app.
 
