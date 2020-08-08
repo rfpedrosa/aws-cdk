@@ -16,7 +16,7 @@ export class NetworkStack extends Stack {
       },
       terminationProtection: props && IsProd(props),
       tags: {
-        environment: `${props.envName}`
+        environment: props.envName
       }
     })
 

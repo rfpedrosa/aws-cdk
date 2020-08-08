@@ -12,8 +12,11 @@ This is an [project template for an app with multiple stacks](https://docs.aws.a
 6. [Authentication stack](lib/authentication-stack.ts) AWS Cognito setup
 7. [Users stack](lib/users-stack.ts) for applicational AWS IAM users (programatic access)
 
+# Getting started
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+1. Set app:XXX context variables with your own values on [`cdk.json`](cdk.json) file
+2. [Bootstrap cdk](https://docs.aws.amazon.com/cdk/latest/guide/cli.html#cli-bootstrap)
+3. The [`cdk.json`](cdk.json) file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
 

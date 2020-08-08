@@ -13,7 +13,7 @@ export class ComputeStack extends Stack {
         region: props.region
       },
       tags: {
-        environment: `${props.envName}`
+        environment: props.envName
       }
     })
 

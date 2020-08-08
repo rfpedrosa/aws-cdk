@@ -11,26 +11,29 @@ import { UsersStack } from '../lib/users-stack'
 
 const app = new cdk.App()
 
-const appName = app.node.tryGetContext('appName')
-const stackEnvPropsProd: IEnvProps = {
-  account: app.node.tryGetContext('prodAwsAccountNumber'),
-  region: app.node.tryGetContext('prodAwsRegion'),
-  envName: 'prod',
-  appName: appName
-}
+const name = app.node.tryGetContext('app:name')
+
+const prodAccountNr: string = app.node.tryGetContext('app:prodAwsAccountNumber')
+const stackEnvPropsProd: IEnvProps | undefined = (prodAccountNr && prodAccountNr.length === 12)
+  ? {
+    account: prodAccountNr,
+    region: app.node.tryGetContext('app:prodAwsRegion'),
+    envName: 'prod',
+    appName: name
+  } : undefined
 
 const stackEnvPropsTest: IEnvProps = {
-  account: app.node.tryGetContext('nonProdAwsAccountNumber'),
-  region: app.node.tryGetContext('nonProdAwsRegion'),
+  account: app.node.tryGetContext('app:nonProdAwsAccountNumber'),
+  region: app.node.tryGetContext('app:nonProdAwsRegion'),
   envName: 'test',
-  appName: appName
+  appName: name
 }
 
 const stackEnvPropsDev: IEnvProps = {
-  account: app.node.tryGetContext('nonProdAwsAccountNumber'),
-  region: app.node.tryGetContext('nonProdAwsRegion'),
+  account: app.node.tryGetContext('app:nonProdAwsAccountNumber'),
+  region: app.node.tryGetContext('app:nonProdAwsRegion'),
   envName: 'dev',
-  appName: appName
+  appName: name
 }
 
 // Dev
@@ -67,29 +70,31 @@ computeStackTest.addDependency(usersStackTest)
 computeStackTest.addDependency(databaseStackTest)
 
 // Prod
-const usersStackProd = new UsersStack(app, `${stackEnvPropsProd.appName}-UsersStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
-const authenticationStackProd = new AuthenticationStack(app, `${stackEnvPropsProd.appName}-AuthenticationStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd);
+if (stackEnvPropsProd) {
+  const usersStackProd = new UsersStack(app, `${stackEnvPropsProd.appName}-UsersStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
+  const authenticationStackProd = new AuthenticationStack(app, `${stackEnvPropsProd.appName}-AuthenticationStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd);
 
-const networkStackProd = new NetworkStack(app, `${stackEnvPropsProd.appName}-NetworkStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
+  const networkStackProd = new NetworkStack(app, `${stackEnvPropsProd.appName}-NetworkStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
 
-const databaseStackEnvPropsProd: IDatabaseStackEnvProps = {
-  ...stackEnvPropsProd,
-  vpc: networkStackProd.vpc
+  const databaseStackEnvPropsProd: IDatabaseStackEnvProps = {
+    ...stackEnvPropsProd,
+    vpc: networkStackProd.vpc
+  }
+  const databaseStackProd = new DatabaseStack(app, `${databaseStackEnvPropsProd.appName}-DatabaseStack-${databaseStackEnvPropsProd.envName}`, databaseStackEnvPropsProd)
+  databaseStackProd.addDependency(networkStackProd)
+
+  const computeStackEnvPropsProd: IComputeStackEnvProps = {
+    ...stackEnvPropsProd,
+    vpc: networkStackProd.vpc,
+    userPool: authenticationStackProd.userPool,
+    apiClient: authenticationStackProd.apiClient,
+    accessKeyId: usersStackProd.accessKeyId,
+    secretAccessKey: usersStackProd.secretAccessKey,
+    rdsSecretArn: databaseStackProd.rdsDbCluster.secret?.secretArn
+  }
+  const computeStackProd = new ComputeStack(app, `${computeStackEnvPropsProd.appName}-ComputeStack-${computeStackEnvPropsProd.envName}`, computeStackEnvPropsProd)
+  computeStackProd.addDependency(networkStackProd)
+  computeStackProd.addDependency(authenticationStackProd)
+  computeStackProd.addDependency(usersStackProd)
+  computeStackProd.addDependency(databaseStackProd)
 }
-const databaseStackProd = new DatabaseStack(app, `${databaseStackEnvPropsProd.appName}-DatabaseStack-${databaseStackEnvPropsProd.envName}`, databaseStackEnvPropsProd)
-databaseStackProd.addDependency(networkStackProd)
-
-const computeStackEnvPropsProd: IComputeStackEnvProps = {
-  ...stackEnvPropsProd,
-  vpc: networkStackProd.vpc,
-  userPool: authenticationStackProd.userPool,
-  apiClient: authenticationStackProd.apiClient,
-  accessKeyId: usersStackProd.accessKeyId,
-  secretAccessKey: usersStackProd.secretAccessKey,
-  rdsSecretArn: databaseStackProd.rdsDbCluster.secret?.secretArn
-}
-const computeStackProd = new ComputeStack(app, `${computeStackEnvPropsProd.appName}-ComputeStack-${computeStackEnvPropsProd.envName}`, computeStackEnvPropsProd)
-computeStackProd.addDependency(networkStackProd)
-computeStackProd.addDependency(authenticationStackProd)
-computeStackProd.addDependency(usersStackProd)
-computeStackProd.addDependency(databaseStackProd)

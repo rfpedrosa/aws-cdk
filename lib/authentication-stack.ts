@@ -1,6 +1,7 @@
 import { Stack, Construct, Duration } from '@aws-cdk/core'
 import * as cognito from '@aws-cdk/aws-cognito'
 import { IEnvProps } from './shared/IEnvProps'
+import { IsProd } from './shared/Environment'
 
 export class AuthenticationStack extends Stack {
   public readonly userPool: cognito.IUserPool
@@ -12,9 +13,9 @@ export class AuthenticationStack extends Stack {
         account: props.account,
         region: props.region
       },
-      terminationProtection: props && props.envName === 'prod',
+      terminationProtection: props && IsProd(props),
       tags: {
-        environment: `${props.envName}`
+        environment: props.envName
       }
     })
 
