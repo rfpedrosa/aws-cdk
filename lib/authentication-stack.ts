@@ -68,29 +68,90 @@ export class AuthenticationStack extends Stack {
       }, */
     })
 
-    const webclient = this.userPool.addClient(`${props.appName}-${props.envName}-userpool-web`, {
+    if (IsProd(props)) {
+      // eslint-disable-next-line no-new
+      new cognito.CfnUserPoolRiskConfigurationAttachment(this, `${props.appName}-${props.envName}-userpool-advanced-security`, {
+        clientId: 'ALL',
+        userPoolId: this.userPool.userPoolId,
+        compromisedCredentialsRiskConfiguration: {
+          actions: {
+            eventAction: 'BLOCK'
+          }
+        }
+      })
+    }
+
+    // Get the AWS CloudFormation resource
+    // https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_resource
+    /* const cfnUserPool = this.userPool.node.defaultChild as cognito.CfnUserPool;
+
+    // Change its properties
+    cfnUserPool.deviceConfiguration = {
+      deviceOnlyRememberedOnUserPrompt: true
+    } */
+
+    // In client apps (web or mobile), we want to enable client side flows:
+    // https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-authentication-flow.html#amazon-cognito-user-pools-client-side-authentication-flow
+    // const webCallbackUrl = 'http://localhost:3000/home'
+    this.userPool.addClient(`${props.appName}-${props.envName}-userpool-web`, {
       userPoolClientName: `${props.appName}-${props.envName}-userpool-web`,
-      oAuth: {
+      authFlows: {
+        // userSrp is the default auth flow on amplify: https://docs.amplify.aws/lib/auth/switch-auth/q/platform/js
+        userSrp: true,
+        refreshToken: true
+      },
+      /* oAuth: {
         flows: {
           authorizationCodeGrant: true
         },
         scopes: [cognito.OAuthScope.OPENID],
         callbackUrls: [
-          'http://localhost:3000/home'
+          webCallbackUrl
         ]
-      }
-      // preventUserExistenceErrors: true, // TODO: ENABLE this for production environment
+      }, */
+      preventUserExistenceErrors: true
     })
 
-    // settings based on https://snevsky.com/blog/dotnet-core-authentication-aws-cognito
-    this.apiClient = this.userPool.addClient(`${props.appName}-${props.envName}-userpool-api`, {
-      userPoolClientName: `${props.appName}-${props.envName}-userpool-api`,
+    this.userPool.addClient(`${props.appName}-${props.envName}-userpool-mobile`, {
+      userPoolClientName: `${props.appName}-${props.envName}-userpool-mobile`,
       authFlows: {
         userSrp: true,
         refreshToken: true
-      }
-      // preventUserExistenceErrors: true, // TODO: ENABLE this for production environment
+      },
+      preventUserExistenceErrors: true
     })
+
+    // setup based on https://snevsky.com/blog/dotnet-core-authentication-aws-cognito
+    this.apiClient = this.userPool.addClient(`${props.appName}-${props.envName}-userpool-api`, {
+      userPoolClientName: `${props.appName}-${props.envName}-userpool-api`
+    })
+
+    // In case I use OAuth2, I need to add a domain and redirect uri
+    // https://aws.amazon.com/blogs/mobile/understanding-amazon-cognito-user-pool-oauth-2-0-grants/
+    // https://docs.amplify.aws/lib/auth/social/q/platform/js#full-samples
+    /* const domain = this.userPool.addDomain(`${props.appName}-${props.envName}-userpool-domain-prefix`, {
+      cognitoDomain: {
+        domainPrefix: `${props.appName}-${props.envName}`
+      }
+    }) */
+
+    // TODO use a certificate for production
+    // https://docs.aws.amazon.com/cdk/api/latest/docs/aws-cognito-readme.html#domains
+    /* const domainCert = new acm.Certificate.fromCertificateArn(this, 'domainCert', certificateArn)
+    const domain = pool.addDomain('CustomDomain', {
+      customDomain: {
+        domainName: 'user.myapp.com',
+        certificate: domainCert,
+      },
+    }) */
+
+    /* domain.signInUrl(webclient, {
+      redirectUri: webCallbackUrl // must be a URL configured under 'callbackUrls' with the client
+    })
+
+    domain.signInUrl(mobileClient, {
+      redirectUri: mobileCallbackUrl // must be a URL configured under 'callbackUrls' with the client
+    }) */
 
     // eslint-disable-next-line no-new
     new cognito.CfnUserPoolResourceServer(this, `${props.appName}-${props.envName}-userpool-resource-server`, {
@@ -105,24 +166,12 @@ export class AuthenticationStack extends Stack {
       ]
     })
 
-    const domain = this.userPool.addDomain(`${props.appName}-${props.envName}-userpool-domain-prefix`, {
-      cognitoDomain: {
-        domainPrefix: `${props.appName}-${props.envName}`
-      }
-    })
-
-    // TODO use a certificate for production
-    // https://docs.aws.amazon.com/cdk/api/latest/docs/aws-cognito-readme.html#domains
-    /* const domainCert = new acm.Certificate.fromCertificateArn(this, 'domainCert', certificateArn)
-    const domain = pool.addDomain('CustomDomain', {
-      customDomain: {
-        domainName: 'user.myapp.com',
-        certificate: domainCert,
-      },
-    }) */
-
-    domain.signInUrl(webclient, {
-      redirectUri: 'http://localhost:3000/home' // must be a URL configured under 'callbackUrls' with the client
+    // eslint-disable-next-line no-new
+    new cognito.CfnUserPoolGroup(this, `${props.appName}-${props.envName}-userpool-group-system-administrators`, {
+      userPoolId: this.userPool.userPoolId,
+      groupName: 'system_administrators',
+      description: 'This user type manages the Organizations/Systems and User base.',
+      precedence: 10
     })
   }
 }

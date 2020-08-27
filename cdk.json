@@ -7,6 +7,8 @@
     "app:nonProdAwsAccountNumber": "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]",
     "app:nonProdAwsRegion": "us-east-1",
     "@aws-cdk/core:enableStackNameDuplicates": "true",
-    "aws-cdk:enableDiffNoFail": "true"
+    "aws-cdk:enableDiffNoFail": "true",
+    "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]:test:aws:elbv2:listener:443:SSLCertificateArns": "arn:aws:acm:us-east-1:YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]:certificate/[UNIQUE_ID]",
+    "[YOUR_PROD_AWS_SUBACCOUNT_NUMBER]:prod:aws:elbv2:listener:443:SSLCertificateArns": "arn:aws:acm:us-east-1:[YOUR_PROD_AWS_SUBACCOUNT_NUMBER]:certificate/[UNIQUE_ID]"
   }
 }

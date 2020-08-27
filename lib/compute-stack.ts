@@ -67,6 +67,23 @@ export class ComputeStack extends Stack {
         optionName: 'LoadBalancerType',
         value: 'application'
       },
+      // https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-cfg-alb.html#environments-cfg-alb-namespaces
+      {
+        namespace: 'aws:elbv2:listener:443',
+        optionName: 'Protocol',
+        value: 'HTTPS'
+      },
+      {
+        namespace: 'aws:elbv2:listener:443',
+        optionName: 'SSLCertificateArns',
+        value: this.node.tryGetContext(`${props.account}:${props.envName}:aws:elbv2:listener:443:SSLCertificateArns`)
+      },
+      {
+        namespace: 'aws:elbv2:listener:443',
+        optionName: 'SSLPolicy',
+        // https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies
+        value: 'ELBSecurityPolicy-TLS-1-2-Ext-2018-06'
+      },
       {
         namespace: 'aws:elasticbeanstalk:application:environment',
         optionName: 'AWS__Cognito__userPoolId',
@@ -116,7 +133,7 @@ export class ComputeStack extends Stack {
     const env = new elasticbeanstalk.CfnEnvironment(this, `${props.envName}`, {
       environmentName: props.envName,
       applicationName: this.app.applicationName || props.appName,
-      solutionStackName: '64bit Amazon Linux 2 v1.0.0 running .NET Core',
+      solutionStackName: '64bit Amazon Linux 2 v2.0.1 running .NET Core',
       optionSettings: options
     })
 
