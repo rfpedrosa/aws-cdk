@@ -72,7 +72,7 @@ computeStackTest.addDependency(databaseStackTest)
 // Prod
 if (stackEnvPropsProd) {
   const usersStackProd = new UsersStack(app, `${stackEnvPropsProd.appName}-UsersStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
-  const authenticationStackProd = new AuthenticationStack(app, `${stackEnvPropsProd.appName}-AuthenticationStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd);
+  const authenticationStackProd = new AuthenticationStack(app, `${stackEnvPropsProd.appName}-AuthenticationStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
 
   const networkStackProd = new NetworkStack(app, `${stackEnvPropsProd.appName}-NetworkStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
 
