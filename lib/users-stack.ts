@@ -1,13 +1,13 @@
 import { Stack, Construct, CfnOutput } from '@aws-cdk/core'
 import * as iam from '@aws-cdk/aws-iam'
-import { IEnvProps } from './shared/IEnvProps'
+import { IUsersStackEnvProps } from './IUsersStackEnvProps'
 import { IsProd } from './shared/Environment'
 
 export class UsersStack extends Stack {
   public readonly accessKeyId: CfnOutput
   public readonly secretAccessKey: CfnOutput
 
-  constructor (scope: Construct, id: string, props: IEnvProps) {
+  constructor (scope: Construct, id: string, props: IUsersStackEnvProps) {
     super(scope, id, {
       env: {
         account: props.account,
@@ -15,7 +15,7 @@ export class UsersStack extends Stack {
       },
       terminationProtection: props && IsProd(props),
       tags: {
-        environment: props.envName
+        environment: `${props.envName}`
       }
     })
 
@@ -24,9 +24,11 @@ export class UsersStack extends Stack {
     })
 
     const group = new iam.Group(this, `${props.appName}-restApi`)
-    // group.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'))
+    group.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonCognitoPowerUser'))
     group.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('SecretsManagerReadWrite'))
     group.addUser(apiIamUser)
+
+    props.appBucket.grantReadWrite(group)
 
     const accessKey = new iam.CfnAccessKey(this, `${props.appName}-${props.envName}-iam-api_secret`, {
       userName: apiIamUser.userName,
