@@ -5,7 +5,9 @@ import { AuthenticationStack } from '../lib/authentication-stack'
 import { IComputeStackEnvProps } from '../lib/IComputeStackEnvProps'
 import { ComputeStack } from '../lib/compute-stack'
 import { IDatabaseStackEnvProps } from '../lib/IDatabaseStackEnvProps'
+import { IUsersStackEnvProps } from '../lib/IUsersStackEnvProps'
 import { DatabaseStack } from '../lib/database-stack'
+import { StorageStack } from '../lib/storage-stack'
 import { IEnvProps } from '../lib/shared/IEnvProps'
 import { UsersStack } from '../lib/users-stack'
 
@@ -40,10 +42,25 @@ const stackEnvPropsDev: IEnvProps = {
 // new ComputeStack(app, `${appName}-ComputeStack-${envDev.envName}`, envDev);
 // eslint-disable-next-line no-new
 new AuthenticationStack(app, `${stackEnvPropsDev.appName}-AuthenticationStack-${stackEnvPropsDev.envName}`, stackEnvPropsDev)
+const storageStackDev = new StorageStack(app, `${stackEnvPropsDev.appName}-StorageStack-${stackEnvPropsDev.envName}`, stackEnvPropsDev)
+
+const usersStackEnvPropsDev: IUsersStackEnvProps = {
+  ...stackEnvPropsDev,
+  appBucket: storageStackDev.appBucket
+}
+const usersStackDev = new UsersStack(app, `${stackEnvPropsDev.appName}-UsersStack-${stackEnvPropsDev.envName}`, usersStackEnvPropsDev)
+usersStackDev.addDependency(storageStackDev)
 
 // Test
-const usersStackTest = new UsersStack(app, `${stackEnvPropsTest.appName}-UsersStack-${stackEnvPropsTest.envName}`, stackEnvPropsTest)
 const authenticationStackTest = new AuthenticationStack(app, `${stackEnvPropsTest.appName}-AuthenticationStack-${stackEnvPropsTest.envName}`, stackEnvPropsTest)
+const storageStackTest = new StorageStack(app, `${stackEnvPropsTest.appName}-StorageStack-${stackEnvPropsTest.envName}`, stackEnvPropsTest)
+
+const usersStackEnvPropsTest: IUsersStackEnvProps = {
+  ...stackEnvPropsTest,
+  appBucket: storageStackTest.appBucket
+}
+const usersStackTest = new UsersStack(app, `${stackEnvPropsTest.appName}-UsersStack-${stackEnvPropsTest.envName}`, usersStackEnvPropsTest)
+usersStackTest.addDependency(storageStackTest)
 
 const networkStackTest = new NetworkStack(app, `${stackEnvPropsTest.appName}-NetworkStack-${stackEnvPropsTest.envName}`, stackEnvPropsTest)
 
@@ -61,18 +78,27 @@ const computeStackEnvPropsTest: IComputeStackEnvProps = {
   apiClient: authenticationStackTest.apiClient,
   accessKeyId: usersStackTest.accessKeyId,
   secretAccessKey: usersStackTest.secretAccessKey,
-  rdsSecretArn: databaseStackTest.rdsDbCluster.secret?.secretArn
+  rdsSecretArn: databaseStackTest.rdsDbCluster.secret?.secretArn,
+  appBucket: storageStackTest.appBucket
 }
 const computeStackTest = new ComputeStack(app, `${computeStackEnvPropsTest.appName}-ComputeStack-${computeStackEnvPropsTest.envName}`, computeStackEnvPropsTest)
 computeStackTest.addDependency(networkStackTest)
 computeStackTest.addDependency(authenticationStackTest)
 computeStackTest.addDependency(usersStackTest)
 computeStackTest.addDependency(databaseStackTest)
+computeStackTest.addDependency(storageStackTest)
 
 // Prod
 if (stackEnvPropsProd) {
-  const usersStackProd = new UsersStack(app, `${stackEnvPropsProd.appName}-UsersStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
   const authenticationStackProd = new AuthenticationStack(app, `${stackEnvPropsProd.appName}-AuthenticationStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
+  const storageStackProd = new StorageStack(app, `${stackEnvPropsProd.appName}-StorageStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
+
+  const usersStackEnvPropsProd: IUsersStackEnvProps = {
+    ...stackEnvPropsProd,
+    appBucket: storageStackProd.appBucket
+  }
+  const usersStackProd = new UsersStack(app, `${stackEnvPropsProd.appName}-UsersStack-${stackEnvPropsProd.envName}`, usersStackEnvPropsProd)
+  usersStackProd.addDependency(storageStackProd)
 
   const networkStackProd = new NetworkStack(app, `${stackEnvPropsProd.appName}-NetworkStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
 
@@ -90,11 +116,13 @@ if (stackEnvPropsProd) {
     apiClient: authenticationStackProd.apiClient,
     accessKeyId: usersStackProd.accessKeyId,
     secretAccessKey: usersStackProd.secretAccessKey,
-    rdsSecretArn: databaseStackProd.rdsDbCluster.secret?.secretArn
+    rdsSecretArn: databaseStackProd.rdsDbCluster.secret?.secretArn,
+    appBucket: storageStackProd.appBucket
   }
   const computeStackProd = new ComputeStack(app, `${computeStackEnvPropsProd.appName}-ComputeStack-${computeStackEnvPropsProd.envName}`, computeStackEnvPropsProd)
   computeStackProd.addDependency(networkStackProd)
   computeStackProd.addDependency(authenticationStackProd)
   computeStackProd.addDependency(usersStackProd)
   computeStackProd.addDependency(databaseStackProd)
+  computeStackProd.addDependency(storageStackProd)
 }

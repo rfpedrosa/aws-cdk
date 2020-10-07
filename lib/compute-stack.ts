@@ -113,8 +113,27 @@ export class ComputeStack extends Stack {
         namespace: 'aws:elasticbeanstalk:application:environment',
         optionName: 'AWS__SecretsManager__EFContext_ConnectionStrings_SecretName',
         value: props.rdsSecretArn
+      },
+      {
+        namespace: 'aws:elasticbeanstalk:application:environment',
+        optionName: 'AWS__s3__BucketName',
+        value: props.appBucket.bucketName
       }
     ]
+
+    const webCallbackUrls = this.node.tryGetContext(`${props.account}:${props.envName}:userpool:webclient:callbackUrls`)
+    webCallbackUrls.split(',').forEach((element:string, index:number) => {
+      const lastChar = element.substr(-1) // Selects the last character
+      if (lastChar === '/') {
+        throw new Error('web client callback url must not end in slash otherwise CORS won\'t work')
+      }
+
+      options.push({
+        namespace: 'aws:elasticbeanstalk:application:environment',
+        optionName: `AllowedOrigins__urlFrontend${index}`,
+        value: element
+      })
+    })
 
     if (IsProd(props)) {
       options.push({

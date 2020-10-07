@@ -1,6 +1,7 @@
 import { IEnvProps } from './shared/IEnvProps'
 import { CfnApplication } from '@aws-cdk/aws-elasticbeanstalk'
 import { IVpc } from '@aws-cdk/aws-ec2'
+import { IBucket } from '@aws-cdk/aws-s3'
 import { IUserPool, IUserPoolClient } from '@aws-cdk/aws-cognito'
 import { CfnOutput } from '@aws-cdk/core'
 
@@ -11,5 +12,6 @@ export interface IComputeStackEnvProps extends IEnvProps {
   apiClient: IUserPoolClient,
   accessKeyId: CfnOutput,
   secretAccessKey: CfnOutput,
-  rdsSecretArn?: string
+  rdsSecretArn?: string,
+  appBucket: IBucket
 }
