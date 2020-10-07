@@ -18,4 +18,4 @@
 # emails.
 *.go docs@example.com
 
-/ @rfpedrosa
+@rfpedrosa
