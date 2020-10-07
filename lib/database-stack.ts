@@ -23,7 +23,7 @@ export class DatabaseStack extends Stack {
     if (IsProd(props)) {
       instanceType = ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE)
     } else {
-      instanceType = ec2.InstanceType.of(ec2.InstanceClass.R5, ec2.InstanceSize.LARGE)
+      instanceType = ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MEDIUM)
     }
 
     this.rdsDbCluster = new rds.DatabaseCluster(this, `${props.appName}-${props.envName}-DbCluster`, {
@@ -32,7 +32,7 @@ export class DatabaseStack extends Stack {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
         version: rds.AuroraPostgresEngineVersion.VER_11_7 // different version class for each engine type
       }),
-      masterUser: {
+      credentials: {
         username: 'clusteradmin'
       },
       instanceProps: {

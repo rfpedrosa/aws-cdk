@@ -97,8 +97,7 @@ export class AuthenticationStack extends Stack {
       userPoolClientName: `${props.appName}-${props.envName}-userpool-web`,
       authFlows: {
         // userSrp is the default auth flow on amplify: https://docs.amplify.aws/lib/auth/switch-auth/q/platform/js
-        userSrp: true,
-        refreshToken: true
+        userSrp: true
       },
       /* oAuth: {
         flows: {
@@ -115,8 +114,7 @@ export class AuthenticationStack extends Stack {
     this.userPool.addClient(`${props.appName}-${props.envName}-userpool-mobile`, {
       userPoolClientName: `${props.appName}-${props.envName}-userpool-mobile`,
       authFlows: {
-        userSrp: true,
-        refreshToken: true
+        userSrp: true
       },
       preventUserExistenceErrors: true
     })
