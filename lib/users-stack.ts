@@ -23,7 +23,9 @@ export class UsersStack extends Stack {
       userName: `${props.appName}-${props.envName}-api`
     })
 
-    const group = new iam.Group(this, `${props.appName}-restApi`)
+    const group = new iam.Group(this, `${props.appName}-${props.envName}-iam-api_group`, {
+      groupName: `${props.appName}-${props.envName}-api`
+    })
     group.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonCognitoPowerUser'))
     group.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('SecretsManagerReadWrite'))
     group.addUser(apiIamUser)

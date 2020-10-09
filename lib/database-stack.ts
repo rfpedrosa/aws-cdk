@@ -24,7 +24,7 @@ export class DatabaseStack extends Stack {
     if (IsProd(props)) {
       const rdsDbCluster = new rds.DatabaseCluster(this, `${props.appName}-${props.envName}-DbCluster`, {
         clusterIdentifier: `${props.appName}-${props.envName}-DbCluster`,
-        // defaultDatabaseName: props.appName, // app responsability
+        defaultDatabaseName: props.appName,
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_11_7 // different version class for each engine type
         }),
@@ -80,7 +80,7 @@ export class DatabaseStack extends Stack {
     } else {
       const instance = new rds.DatabaseInstance(this, `${props.appName}-${props.envName}-DbInstance`, {
         engine: rds.DatabaseInstanceEngine.postgres({ version: rds.PostgresEngineVersion.VER_11_7 }),
-        // databaseName: props.appName, // app responsability
+        databaseName: props.appName,
         // optional, defaults to m5.large
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO), // free tier
         vpc: props.vpc,
