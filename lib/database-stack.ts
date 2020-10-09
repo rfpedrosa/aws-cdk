@@ -40,8 +40,10 @@ export class DatabaseStack extends Stack {
         storageEncrypted: IsProd(props),
         backup: {
           retention: IsProd(props) ? Duration.days(7) : Duration.days(1)
-        },
-        removalPolicy: IsProd(props) ? RemovalPolicy.SNAPSHOT : RemovalPolicy.DESTROY
+        }
+        // there is a bug about having this set: https://stackoverflow.com/questions/45117089/deletionpolicysnapshot-cannot-be-specified-for-a-cluster-instance-use-deletion
+        // but default value is RemovalPolicy.SNAPSHOT which should be fine
+        // removalPolicy: IsProd(props) ? RemovalPolicy.SNAPSHOT : RemovalPolicy.DESTROY
       })
 
       // this.rdsDbCluster.connections.allowDefaultPortInternally()
