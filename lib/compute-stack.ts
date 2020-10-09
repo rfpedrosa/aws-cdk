@@ -17,6 +17,10 @@ export class ComputeStack extends Stack {
       }
     })
 
+    if (!props.rdsCredentialsSecretArn) {
+      throw new Error('rdsCredentialsSecretArn is required')
+    }
+
     const appName = props.appName
 
     if (props && props.app) {
@@ -112,7 +116,17 @@ export class ComputeStack extends Stack {
       {
         namespace: 'aws:elasticbeanstalk:application:environment',
         optionName: 'AWS__SecretsManager__EFContext_ConnectionStrings_SecretName',
-        value: props.rdsSecretArn
+        value: props.rdsCredentialsSecretArn
+      },
+      {
+        namespace: 'aws:elasticbeanstalk:application:environment',
+        optionName: 'AWS__RDS__Hostname',
+        value: props.rdsHostname
+      },
+      {
+        namespace: 'aws:elasticbeanstalk:application:environment',
+        optionName: 'AWS__RDS__Port',
+        value: props.rdsPort
       },
       {
         namespace: 'aws:elasticbeanstalk:application:environment',
@@ -152,7 +166,7 @@ export class ComputeStack extends Stack {
     const env = new elasticbeanstalk.CfnEnvironment(this, `${props.envName}`, {
       environmentName: props.envName,
       applicationName: this.app.applicationName || props.appName,
-      solutionStackName: '64bit Amazon Linux 2 v2.0.2 running .NET Core',
+      solutionStackName: '64bit Amazon Linux 2 v2.0.3 running .NET Core',
       optionSettings: options
     })
 

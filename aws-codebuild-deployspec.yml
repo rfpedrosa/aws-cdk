@@ -10,7 +10,6 @@ phases:
     commands:
       - npm install -g aws-cdk
       - cdk doctor
-      - cd backend/aws-cdk
       - npm install
       
   build:

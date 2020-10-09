@@ -79,20 +79,22 @@ export class NetworkStack extends Stack {
       })
     }
 
-    const maxAzs = 3
+    // const maxAzs = 3
     this.vpc = new ec2.Vpc(this, `${props.appName}-${props.envName}-vpc`, {
       // 'cidr' configures the IP range and size of the entire VPC.
       // The IP space will be divided over the configured subnets.
       cidr: '10.0.0.0/21',
 
       // 'maxAzs' configures the maximum number of availability zones to use
-      maxAzs: maxAzs,
+      // maxAzs: maxAzs,
 
       subnetConfiguration: subnetConfiguration,
 
-      // NAT Gateway has costs. Even for production, it is possible to save money by putting applicaion later in the public subnet
-      // see AssociatePublicIpAddress on https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html#command-options-general-ec2vpc
-      natGateways: IsProd(props) ? maxAzs : 0
+      // Based on: https://docs.aws.amazon.com/cdk/api/latest/docs/aws-ec2-readme.html#subnet-types
+      // "If you would like to save on the cost of NAT gateways, you can use isolated subnets instead of private subnets (as described in Advanced Subnet Configuration).
+      // If you need private instances to have internet connectivity, another option is to reduce the number of NAT gateways created by setting the natGateways property to a lower value
+      // (the default is one NAT gateway per availability zone). Be aware that this may have availability implications for your application.""
+      natGateways: IsProd(props) ? 1 : 0
     })
 
     // From https://docs.aws.amazon.com/cdk/api/latest/docs/aws-ec2-readme.html#bastion-hosts:

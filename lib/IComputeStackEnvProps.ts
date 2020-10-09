@@ -12,6 +12,8 @@ export interface IComputeStackEnvProps extends IEnvProps {
   apiClient: IUserPoolClient,
   accessKeyId: CfnOutput,
   secretAccessKey: CfnOutput,
-  rdsSecretArn?: string,
+  rdsCredentialsSecretArn?: string,
+  rdsHostname: string,
+  rdsPort: string,
   appBucket: IBucket
 }

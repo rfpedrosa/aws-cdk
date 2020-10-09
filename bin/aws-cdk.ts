@@ -78,7 +78,9 @@ const computeStackEnvPropsTest: IComputeStackEnvProps = {
   apiClient: authenticationStackTest.apiClient,
   accessKeyId: usersStackTest.accessKeyId,
   secretAccessKey: usersStackTest.secretAccessKey,
-  rdsSecretArn: databaseStackTest.rdsDbCluster.secret?.secretArn,
+  rdsCredentialsSecretArn: databaseStackTest.rdsScretArn,
+  rdsHostname: databaseStackTest.rdsHostname,
+  rdsPort: databaseStackTest.rdsPort,
   appBucket: storageStackTest.appBucket
 }
 const computeStackTest = new ComputeStack(app, `${computeStackEnvPropsTest.appName}-ComputeStack-${computeStackEnvPropsTest.envName}`, computeStackEnvPropsTest)
@@ -116,7 +118,9 @@ if (stackEnvPropsProd) {
     apiClient: authenticationStackProd.apiClient,
     accessKeyId: usersStackProd.accessKeyId,
     secretAccessKey: usersStackProd.secretAccessKey,
-    rdsSecretArn: databaseStackProd.rdsDbCluster.secret?.secretArn,
+    rdsCredentialsSecretArn: databaseStackProd.rdsScretArn,
+    rdsHostname: databaseStackProd.rdsHostname,
+    rdsPort: databaseStackProd.rdsPort,
     appBucket: storageStackProd.appBucket
   }
   const computeStackProd = new ComputeStack(app, `${computeStackEnvPropsProd.appName}-ComputeStack-${computeStackEnvPropsProd.envName}`, computeStackEnvPropsProd)
