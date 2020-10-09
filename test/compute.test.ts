@@ -63,8 +63,6 @@ test('EB has DB connection string as environment variable', () => {
     accessKeyId: usersStack.accessKeyId,
     secretAccessKey: usersStack.secretAccessKey,
     rdsCredentialsSecretArn: databaseStack.rdsScretArn,
-    rdsHostname: databaseStack.rdsHostname,
-    rdsPort: databaseStack.rdsPort,
     appBucket: storageStack.appBucket
   })
 
@@ -138,8 +136,6 @@ test('throw error if any client callback url ends with slash', () => {
       accessKeyId: usersStack.accessKeyId,
       secretAccessKey: usersStack.secretAccessKey,
       rdsCredentialsSecretArn: databaseStack.rdsScretArn,
-      rdsHostname: databaseStack.rdsHostname,
-      rdsPort: databaseStack.rdsPort,
       appBucket: storageStack.appBucket
     })
   }).toThrowError()
@@ -182,14 +178,6 @@ test('throw error if rds secret is undefined', () => {
     appBucket: storageStack.appBucket
   })
 
-  const databaseStack = new DatabaseStack(app, 'MyDbStack', {
-    account: 'XXX',
-    region: 'us-east-1',
-    envName: 'prod',
-    appName: 'my-app',
-    vpc: networkStack.vpc
-  })
-
   // THEN
   expect(() => {
     // eslint-disable-next-line no-new
@@ -204,8 +192,6 @@ test('throw error if rds secret is undefined', () => {
       accessKeyId: usersStack.accessKeyId,
       secretAccessKey: usersStack.secretAccessKey,
       rdsCredentialsSecretArn: undefined,
-      rdsHostname: databaseStack.rdsHostname,
-      rdsPort: databaseStack.rdsPort,
       appBucket: storageStack.appBucket
     })
   }).toThrowError()

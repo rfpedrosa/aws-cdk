@@ -13,7 +13,5 @@ export interface IComputeStackEnvProps extends IEnvProps {
   accessKeyId: CfnOutput,
   secretAccessKey: CfnOutput,
   rdsCredentialsSecretArn?: string,
-  rdsHostname: string,
-  rdsPort: string,
   appBucket: IBucket
 }

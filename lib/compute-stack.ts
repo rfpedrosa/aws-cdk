@@ -120,16 +120,6 @@ export class ComputeStack extends Stack {
       },
       {
         namespace: 'aws:elasticbeanstalk:application:environment',
-        optionName: 'AWS__RDS__Hostname',
-        value: props.rdsHostname
-      },
-      {
-        namespace: 'aws:elasticbeanstalk:application:environment',
-        optionName: 'AWS__RDS__Port',
-        value: props.rdsPort
-      },
-      {
-        namespace: 'aws:elasticbeanstalk:application:environment',
         optionName: 'AWS__s3__BucketName',
         value: props.appBucket.bucketName
       }

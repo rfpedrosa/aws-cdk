@@ -6,8 +6,6 @@ import { IsProd } from './shared/Environment'
 
 export class DatabaseStack extends Stack {
   readonly rdsScretArn: string | undefined
-  readonly rdsHostname: string
-  readonly rdsPort: string
 
   constructor (scope: Construct, id: string, props: IDatabaseStackEnvProps) {
     super(scope, id, {
@@ -51,8 +49,6 @@ export class DatabaseStack extends Stack {
       rdsDbCluster.connections.allowDefaultPortFrom(ec2.Peer.ipv4('52.15.247.208/29'), 'Allow CODEBUILD on us-east-2')
       rdsDbCluster.connections.allowDefaultPortFrom(ec2.Peer.ipv4('10.0.0.0/21'), 'VPC IP range on network stack (give access to AWS EB)')
       this.rdsScretArn = rdsDbCluster.secret?.secretArn
-      this.rdsHostname = rdsDbCluster.clusterEndpoint.hostname
-      this.rdsPort = rdsDbCluster.clusterEndpoint.port.toString()
 
       // Average CPU utilization over 5 minutes
       const highCpuMetric = rdsDbCluster.metricCPUUtilization()
@@ -97,8 +93,6 @@ export class DatabaseStack extends Stack {
       instance.connections.allowDefaultPortFrom(ec2.Peer.ipv4('52.15.247.208/29'), 'Allow CODEBUILD on us-east-2')
       instance.connections.allowDefaultPortFrom(ec2.Peer.ipv4('10.0.0.0/21'), 'VPC IP range on network stack (give access to AWS EB)')
       this.rdsScretArn = instance.secret?.secretArn
-      this.rdsHostname = instance.dbInstanceEndpointAddress
-      this.rdsPort = instance.dbInstanceEndpointPort
     }
   }
 }
