@@ -107,6 +107,9 @@ export class NetworkStack extends Stack {
 
       this.bastion.allowSshAccessFrom(ec2.Peer.anyIpv4())
 
+      // https://docs.aws.amazon.com/cdk/api/latest/docs/aws-ec2-readme.html#bastion-hosts
+      // "As there are no SSH public keys deployed on this machine, you need to use EC2 Instance Connect with the command aws ec2-instance-connect send-ssh-public-key to provide your SSH public key."
+
       // From https://docs.aws.amazon.com/cdk/api/latest/docs/aws-ec2-readme.html#vpc-flow-logs:
       // "VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC.
       // Flow log data can be published to Amazon CloudWatch Logs and Amazon S3"
