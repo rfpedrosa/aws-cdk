@@ -1,4 +1,4 @@
-import { expect as expectCDK, beASupersetOfTemplate } from '@aws-cdk/assert'
+import { expect as expectCDK, haveResourceLike, arrayWith, objectLike } from '@aws-cdk/assert'
 import * as cdk from '@aws-cdk/core'
 import { DatabaseStack } from '../lib/database-stack'
 import { NetworkStack } from '../lib/network-stack'
@@ -67,13 +67,12 @@ test('EB has DB connection string as environment variable', () => {
   })
 
   // THEN
-  expectCDK(computeStack).to(beASupersetOfTemplate({
-    Properties: {
-      OptionSettings: [{
-        Namespace: 'aws:elasticbeanstalk:application:environment',
-        OptionName: 'AWS__SecretsManager__EFContext_ConnectionStrings_SecretName'
-      }]
-    }
+  expectCDK(computeStack).to(haveResourceLike('AWS::ElasticBeanstalk::Environment', {
+    EnvironmentName: 'prod',
+    OptionSettings: arrayWith(objectLike({
+      Namespace: 'aws:elasticbeanstalk:application:environment',
+      OptionName: 'AWS__SecretsManager__EFContext_ConnectionStrings_SecretName'
+    }))
   }))
 })
 
