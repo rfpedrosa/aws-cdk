@@ -9,7 +9,8 @@ test('User pool created as case insensitive', () => {
     account: 'XXX',
     region: 'us-east-1',
     envName: 'prod',
-    appName: 'my-app'
+    appName: 'my-app',
+    fullname: 'My App'
   })
 
   // THEN

@@ -21,13 +21,14 @@ export class ComputeStack extends Stack {
       throw new Error('rdsCredentialsSecretArn is required')
     }
 
-    const appName = props.appName
-
+    let appName: string
     if (props && props.app) {
       // if we receive an app, let say, from another stack, we don't need to recreate
       this.app = props.app
+      appName = this.app.applicationName || props.appName
     } else {
-      this.app = new elasticbeanstalk.CfnApplication(this, `${props.appName}-eb`, {
+      appName = props.appName
+      this.app = new elasticbeanstalk.CfnApplication(this, `${appName}-eb`, {
         applicationName: appName,
         description: `Rest Web Api for ${appName} app`
       })
@@ -87,6 +88,18 @@ export class ComputeStack extends Stack {
         optionName: 'SSLPolicy',
         // https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies
         value: 'ELBSecurityPolicy-TLS-1-2-Ext-2018-06'
+      },
+      {
+        namespace: 'aws:elasticbeanstalk:application:environment',
+        optionName: 'ASPNETCORE_ENVIRONMENT',
+        value: IsProd(props)
+          ? 'Production'
+          : props.envName
+      },
+      {
+        namespace: 'aws:elasticbeanstalk:application:environment',
+        optionName: 'ShowPII',
+        value: String(!IsProd(props))
       },
       {
         namespace: 'aws:elasticbeanstalk:application:environment',
@@ -153,9 +166,9 @@ export class ComputeStack extends Stack {
       })
     }
 
-    const env = new elasticbeanstalk.CfnEnvironment(this, `${props.envName}`, {
-      environmentName: props.envName,
-      applicationName: this.app.applicationName || props.appName,
+    const env = new elasticbeanstalk.CfnEnvironment(this, `${appName}-eb-${props.envName}`, {
+      environmentName: `${appName}-${props.envName}`,
+      applicationName: appName,
       solutionStackName: '64bit Amazon Linux 2 v2.0.3 running .NET Core',
       optionSettings: options
     })

@@ -2,6 +2,7 @@
   "app": "npx ts-node bin/aws-cdk.ts",
   "context": {
     "app:name": "[YOUR_APP_NAME]",
+    "app:fullname": "[YOUR_FULL_APP_NAME]",
     "app:prodAwsAccountNumber": "[YOUR_PROD_AWS_SUBACCOUNT_NUMBER]",
     "app:prodAwsRegion": "us-east-1",
     "app:nonProdAwsAccountNumber": "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]",

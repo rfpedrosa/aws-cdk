@@ -14,6 +14,7 @@ import { UsersStack } from '../lib/users-stack'
 const app = new cdk.App()
 
 const name = app.node.tryGetContext('app:name')
+const fullname = app.node.tryGetContext('app:fullname')
 
 const prodAccountNr: string = app.node.tryGetContext('app:prodAwsAccountNumber')
 const stackEnvPropsProd: IEnvProps | undefined = (prodAccountNr && prodAccountNr.length === 12)
@@ -21,21 +22,24 @@ const stackEnvPropsProd: IEnvProps | undefined = (prodAccountNr && prodAccountNr
     account: prodAccountNr,
     region: app.node.tryGetContext('app:prodAwsRegion'),
     envName: 'prod',
-    appName: name
+    appName: name,
+    fullname: fullname
   } : undefined
 
 const stackEnvPropsTest: IEnvProps = {
   account: app.node.tryGetContext('app:nonProdAwsAccountNumber'),
   region: app.node.tryGetContext('app:nonProdAwsRegion'),
   envName: 'test',
-  appName: name
+  appName: name,
+  fullname: fullname
 }
 
 const stackEnvPropsDev: IEnvProps = {
   account: app.node.tryGetContext('app:nonProdAwsAccountNumber'),
   region: app.node.tryGetContext('app:nonProdAwsRegion'),
   envName: 'dev',
-  appName: name
+  appName: name,
+  fullname: fullname
 }
 
 // Dev

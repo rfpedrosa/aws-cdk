@@ -46,7 +46,7 @@ export class DatabaseStack extends Stack {
 
       // this.rdsDbCluster.connections.allowDefaultPortInternally()
       // Based on https://ctoasaservice.org/2019/01/23/aws-codebuild-and-access-to-rds/
-      rdsDbCluster.connections.allowDefaultPortFrom(ec2.Peer.ipv4('52.15.247.208/29'), 'Allow CODEBUILD on us-east-2')
+      rdsDbCluster.connections.allowDefaultPortFrom(ec2.Peer.ipv4('34.228.4.208/28'), 'Allow CODEBUILD on us-east-1')
       rdsDbCluster.connections.allowDefaultPortFrom(ec2.Peer.ipv4('10.0.0.0/21'), 'VPC IP range on network stack (give access to AWS EB)')
       this.rdsScretArn = rdsDbCluster.secret?.secretArn
 
@@ -90,7 +90,7 @@ export class DatabaseStack extends Stack {
         removalPolicy: RemovalPolicy.DESTROY,
         storageEncrypted: false // DB Instance class db.t2.micro does not support encryption at rest
       })
-      instance.connections.allowDefaultPortFrom(ec2.Peer.ipv4('52.15.247.208/29'), 'Allow CODEBUILD on us-east-2')
+      instance.connections.allowDefaultPortFrom(ec2.Peer.ipv4('34.228.4.208/28'), 'Allow CODEBUILD on us-east-1')
       instance.connections.allowDefaultPortFrom(ec2.Peer.ipv4('10.0.0.0/21'), 'VPC IP range on network stack (give access to AWS EB)')
       this.rdsScretArn = instance.secret?.secretArn
     }

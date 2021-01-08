@@ -27,9 +27,9 @@ export class AuthenticationStack extends Stack {
       signInCaseSensitive: false,
       accountRecovery: AccountRecovery.EMAIL_AND_PHONE_WITHOUT_MFA,
       userInvitation: {
-        emailSubject: `Invite to join our ${props.appName}!`,
-        emailBody: `Hello {username}, you have been invited to join our ${props.appName}! Your temporary password is {####}`,
-        smsMessage: `Hello {username}, Your temporary password for our ${props.appName} is {####}`
+        emailSubject: `Invite to join our ${props.fullname}!`,
+        emailBody: `Hello {username}, you have been invited to join our ${props.fullname}! Your temporary password is {####}`,
+        smsMessage: `Hello {username}, you have been invited to join our ${props.fullname}! Your temporary password is {####}`
       },
       signInAliases: {
         username: true,
@@ -44,15 +44,14 @@ export class AuthenticationStack extends Stack {
       customAttributes: {
         organization_id: new cognito.StringAttribute({ minLen: 1, maxLen: 150, mutable: false })
       },
-      /*
       // "Cognito recommends that email and phone number be automatically verified, if they are one of the sign in methods for the user pool.
       // The CDK does this by default, when email and/or phone number are specified as part of signInAliases"
       userVerification: {
-        emailSubject: `Verify your email for${props.appName} app!`,
-        emailBody: `Hello {username}, Thanks for signing up to our ${props.appName} app! Your verification code is {####}`,
+        emailSubject: `Verify your email for ${props.fullname} app!`,
+        emailBody: `Hello {username}, Thanks for signing up to our ${props.fullname} app! Your verification code is {####}`,
         emailStyle: cognito.VerificationEmailStyle.CODE,
-        smsMessage: `Hello {username}, Thanks for signing up to our ${props.appName} app! Your verification code is {####}`
-      }, */
+        smsMessage: `Hello {username}, Thanks for signing up to our ${props.fullname} app! Your verification code is {####}`
+      },
       passwordPolicy: {
         minLength: 8,
         requireLowercase: true,
@@ -157,7 +156,7 @@ export class AuthenticationStack extends Stack {
     this.apiClient = this.userPool.addClient(`${props.appName}-${props.envName}-userpool-api`, {
       userPoolClientName: `${props.appName}-${props.envName}-userpool-api`,
       authFlows: {
-        userPassword: !IsProd(props),
+        userPassword: !IsProd(props)
       },
       preventUserExistenceErrors: true
     })

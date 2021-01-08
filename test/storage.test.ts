@@ -9,7 +9,8 @@ test('App bucket should be private (not public available)', () => {
     account: 'XXX',
     region: 'us-east-1',
     envName: 'prod',
-    appName: 'my-app'
+    appName: 'my-app',
+    fullname: 'My App'
   })
 
   // THEN
@@ -30,7 +31,8 @@ test('App bucket has aws:kms encryption', () => {
     account: 'XXX',
     region: 'us-east-1',
     envName: 'prod',
-    appName: 'my-app'
+    appName: 'my-app',
+    fullname: 'My App'
   })
 
   // THEN
@@ -52,7 +54,8 @@ test('App bucket for prod has retain policy', () => {
     account: 'XXX',
     region: 'us-east-1',
     envName: 'prod',
-    appName: 'my-app'
+    appName: 'my-app',
+    fullname: 'My App'
   })
 
   // THEN
