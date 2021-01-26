@@ -169,7 +169,7 @@ export class ComputeStack extends Stack {
     const env = new elasticbeanstalk.CfnEnvironment(this, `${appName}-eb-${props.envName}`, {
       environmentName: `${appName}-${props.envName}`,
       applicationName: appName,
-      solutionStackName: '64bit Amazon Linux 2 v2.0.3 running .NET Core',
+      solutionStackName: '64bit Amazon Linux 2 v2.1.1 running .NET Core',
       optionSettings: options
     })
 
