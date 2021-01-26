@@ -19,12 +19,13 @@ const fullname = app.node.tryGetContext('app:fullname')
 const prodAccountNr: string = app.node.tryGetContext('app:prodAwsAccountNumber')
 const stackEnvPropsProd: IEnvProps | undefined = (prodAccountNr && prodAccountNr.length === 12)
   ? {
-    account: prodAccountNr,
-    region: app.node.tryGetContext('app:prodAwsRegion'),
-    envName: 'prod',
-    appName: name,
-    fullname: fullname
-  } : undefined
+      account: prodAccountNr,
+      region: app.node.tryGetContext('app:prodAwsRegion'),
+      envName: 'prod',
+      appName: name,
+      fullname: fullname
+    }
+  : undefined
 
 const stackEnvPropsTest: IEnvProps = {
   account: app.node.tryGetContext('app:nonProdAwsAccountNumber'),

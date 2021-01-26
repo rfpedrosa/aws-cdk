@@ -72,23 +72,6 @@ export class ComputeStack extends Stack {
         optionName: 'LoadBalancerType',
         value: 'application'
       },
-      // https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-cfg-alb.html#environments-cfg-alb-namespaces
-      {
-        namespace: 'aws:elbv2:listener:443',
-        optionName: 'Protocol',
-        value: 'HTTPS'
-      },
-      {
-        namespace: 'aws:elbv2:listener:443',
-        optionName: 'SSLCertificateArns',
-        value: this.node.tryGetContext(`${props.account}:${props.envName}:aws:elbv2:listener:443:SSLCertificateArns`)
-      },
-      {
-        namespace: 'aws:elbv2:listener:443',
-        optionName: 'SSLPolicy',
-        // https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies
-        value: 'ELBSecurityPolicy-TLS-1-2-Ext-2018-06'
-      },
       {
         namespace: 'aws:elasticbeanstalk:application:environment',
         optionName: 'ASPNETCORE_ENVIRONMENT',
@@ -164,6 +147,28 @@ export class ComputeStack extends Stack {
         optionName: 'MaxSize',
         value: '1' // do not autoscale in non prod environment
       })
+    }
+
+    const sslCertificateArns = this.node.tryGetContext(`${props.account}:${props.envName}:aws:elbv2:listener:443:SSLCertificateArns`)
+    if (sslCertificateArns) {
+      // https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-cfg-alb.html#environments-cfg-alb-namespaces
+      options.push(
+        {
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'Protocol',
+          value: 'HTTPS'
+        },
+        {
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'SSLCertificateArns',
+          value: sslCertificateArns
+        },
+        {
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'SSLPolicy',
+          // https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies
+          value: 'ELBSecurityPolicy-TLS-1-2-Ext-2018-06'
+        })
     }
 
     const env = new elasticbeanstalk.CfnEnvironment(this, `${appName}-eb-${props.envName}`, {
