@@ -20,7 +20,9 @@ export class StorageStack extends Stack {
     })
 
     this.appBucket = new s3.Bucket(this, `${props.appName}-${props.envName}-s3`, {
-      bucketName: `${props.appName}-${props.envName}`,
+      // avoid bucket name collision using unique ids:
+      // https://docs.aws.amazon.com/cdk/latest/guide/identifiers.html#identifiers_unique_ids
+      bucketName: `${props.appName}-${props.envName}-${this.node.addr}`,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: IsProd(props) ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
       encryption: s3.BucketEncryption.KMS_MANAGED

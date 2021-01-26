@@ -89,6 +89,7 @@ export class AuthenticationStack extends Stack {
     // by a High level constructor (https://docs.aws.amazon.com/cdk/api/latest/docs/aws-construct-library.html#module-contents) so
     // a Cloud Formation Resource (Cfn) is the best way to setup
     // Example: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cognito-userpoolidentityprovider.html#aws-resource-cognito-userpoolidentityprovider--examples
+    /*
     const googleSecretsArn = this.node.tryGetContext(`${props.account}:${props.envName}:secret:google-arn`)
     const cfnGoogleProvider = new cognito.CfnUserPoolIdentityProvider(this, `${props.appName}-${props.envName}-userpool-identityprovider-google`, {
       providerName: 'Google',
@@ -111,6 +112,7 @@ export class AuthenticationStack extends Stack {
         authorize_scopes: 'profile email openid'
       }
     })
+    */
 
     // Get the AWS CloudFormation resource
     // https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_resource
@@ -147,10 +149,10 @@ export class AuthenticationStack extends Stack {
     const cfnUserPoolWebClient = webClient.node.defaultChild as cognito.CfnUserPoolClient
     // Change its properties
     cfnUserPoolWebClient.supportedIdentityProviders = [
-      UserPoolClientIdentityProvider.COGNITO.name,
-      'Google'
+      UserPoolClientIdentityProvider.COGNITO.name
+      // 'Google'
     ]
-    cfnUserPoolWebClient.addDependsOn(cfnGoogleProvider)
+    // cfnUserPoolWebClient.addDependsOn(cfnGoogleProvider)
 
     // setup based on https://snevsky.com/blog/dotnet-core-authentication-aws-cognito
     this.apiClient = this.userPool.addClient(`${props.appName}-${props.envName}-userpool-api`, {

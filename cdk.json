@@ -1,19 +1,19 @@
 {
   "app": "npx ts-node bin/aws-cdk.ts",
   "context": {
-    "app:name": "my-app",
+    "app:name": "myapp",
     "app:fullname": "My Awesome App",
     "app:prodAwsAccountNumber": "",
     "app:prodAwsRegion": "us-east-1",
-    "app:nonProdAwsAccountNumber": "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]",
+    "app:nonProdAwsAccountNumber": "615275706179",
     "app:nonProdAwsRegion": "us-east-1",
     "@aws-cdk/core:enableStackNameDuplicates": "true",
     "aws-cdk:enableDiffNoFail": "true",
-    "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]:dev:userpool:webclient:callbackUrls": "http://localhost:3000",
-    "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]:dev:userpool:webclient:logoutUrls": "http://localhost:3000/logout",
-    "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]:test:aws:elbv2:listener:443:SSLCertificateArns": null,
-    "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]:test:userpool:webclient:callbackUrls": "http://localhost:3000,https://your_friendly_test_subdomain.com",
-    "[YOUR_NON_PROD_AWS_SUBACCOUNT_NUMBER]:test:userpool:webclient:logoutUrls": "http://localhost:3000/logout,https://your_friendly_test_subdomain.com/logout",
+    "615275706179:dev:userpool:webclient:callbackUrls": "http://localhost:3000",
+    "615275706179:dev:userpool:webclient:logoutUrls": "http://localhost:3000/logout",
+    "615275706179:test:aws:elbv2:listener:443:SSLCertificateArns": null,
+    "615275706179:test:userpool:webclient:callbackUrls": "http://localhost:3000,https://your_friendly_test_subdomain.com",
+    "615275706179:test:userpool:webclient:logoutUrls": "http://localhost:3000/logout,https://your_friendly_test_subdomain.com/logout",
     "[YOUR_PROD_AWS_SUBACCOUNT_NUMBER]:prod:aws:elbv2:listener:443:SSLCertificateArns": "arn:aws:acm:us-east-1:[YOUR_PROD_AWS_SUBACCOUNT_NUMBER]:certificate/[UNIQUE_ID]",
     "[YOUR_PROD_AWS_SUBACCOUNT_NUMBER]:prod:userpool:webclient:callbackUrls": "https://your_friendly_prod_domain.com"
   }
