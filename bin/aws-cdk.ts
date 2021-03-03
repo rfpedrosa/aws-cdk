@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as cdk from '@aws-cdk/core'
 import { NetworkStack } from '../lib/network-stack'
+import { IAuthenticationStackEnvProps } from '../lib/IAuthenticationStackEnvProps'
 import { AuthenticationStack } from '../lib/authentication-stack'
 import { IComputeStackEnvProps } from '../lib/IComputeStackEnvProps'
 import { ComputeStack } from '../lib/compute-stack'
@@ -44,27 +45,35 @@ const stackEnvPropsDev: IEnvProps = {
 }
 
 // Dev
-// new ComputeStack(app, `${appName}-ComputeStack-${envDev.envName}`, envDev);
-// eslint-disable-next-line no-new
-new AuthenticationStack(app, `${stackEnvPropsDev.appName}-AuthenticationStack-${stackEnvPropsDev.envName}`, stackEnvPropsDev)
 const storageStackDev = new StorageStack(app, `${stackEnvPropsDev.appName}-StorageStack-${stackEnvPropsDev.envName}`, stackEnvPropsDev)
+const authenticationStackEnvPropsDev: IAuthenticationStackEnvProps = {
+  ...stackEnvPropsDev,
+  appBucket: storageStackDev.appBucket
+}
+// eslint-disable-next-line no-new
+new AuthenticationStack(app, `${authenticationStackEnvPropsDev.appName}-AuthenticationStack-${authenticationStackEnvPropsDev.envName}`, authenticationStackEnvPropsDev)
 
 const usersStackEnvPropsDev: IUsersStackEnvProps = {
   ...stackEnvPropsDev,
   appBucket: storageStackDev.appBucket
 }
-const usersStackDev = new UsersStack(app, `${stackEnvPropsDev.appName}-UsersStack-${stackEnvPropsDev.envName}`, usersStackEnvPropsDev)
+const usersStackDev = new UsersStack(app, `${usersStackEnvPropsDev.appName}-UsersStack-${usersStackEnvPropsDev.envName}`, usersStackEnvPropsDev)
 usersStackDev.addDependency(storageStackDev)
 
 // Test
-const authenticationStackTest = new AuthenticationStack(app, `${stackEnvPropsTest.appName}-AuthenticationStack-${stackEnvPropsTest.envName}`, stackEnvPropsTest)
 const storageStackTest = new StorageStack(app, `${stackEnvPropsTest.appName}-StorageStack-${stackEnvPropsTest.envName}`, stackEnvPropsTest)
+const authenticationStackEnvPropsTest: IAuthenticationStackEnvProps = {
+  ...stackEnvPropsTest,
+  appBucket: storageStackTest.appBucket
+}
+
+const authenticationStackTest = new AuthenticationStack(app, `${authenticationStackEnvPropsTest.appName}-AuthenticationStack-${authenticationStackEnvPropsTest.envName}`, authenticationStackEnvPropsTest)
 
 const usersStackEnvPropsTest: IUsersStackEnvProps = {
   ...stackEnvPropsTest,
   appBucket: storageStackTest.appBucket
 }
-const usersStackTest = new UsersStack(app, `${stackEnvPropsTest.appName}-UsersStack-${stackEnvPropsTest.envName}`, usersStackEnvPropsTest)
+const usersStackTest = new UsersStack(app, `${usersStackEnvPropsTest.appName}-UsersStack-${usersStackEnvPropsTest.envName}`, usersStackEnvPropsTest)
 usersStackTest.addDependency(storageStackTest)
 
 const networkStackTest = new NetworkStack(app, `${stackEnvPropsTest.appName}-NetworkStack-${stackEnvPropsTest.envName}`, stackEnvPropsTest)
@@ -95,14 +104,19 @@ computeStackTest.addDependency(storageStackTest)
 
 // Prod
 if (stackEnvPropsProd) {
-  const authenticationStackProd = new AuthenticationStack(app, `${stackEnvPropsProd.appName}-AuthenticationStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
   const storageStackProd = new StorageStack(app, `${stackEnvPropsProd.appName}-StorageStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)
+  const authenticationStackEnvPropsProd: IAuthenticationStackEnvProps = {
+    ...stackEnvPropsProd,
+    appBucket: storageStackProd.appBucket
+  }
+
+  const authenticationStackProd = new AuthenticationStack(app, `${authenticationStackEnvPropsProd.appName}-AuthenticationStack-${authenticationStackEnvPropsProd.envName}`, authenticationStackEnvPropsProd)
 
   const usersStackEnvPropsProd: IUsersStackEnvProps = {
     ...stackEnvPropsProd,
     appBucket: storageStackProd.appBucket
   }
-  const usersStackProd = new UsersStack(app, `${stackEnvPropsProd.appName}-UsersStack-${stackEnvPropsProd.envName}`, usersStackEnvPropsProd)
+  const usersStackProd = new UsersStack(app, `${usersStackEnvPropsProd.appName}-UsersStack-${usersStackEnvPropsProd.envName}`, usersStackEnvPropsProd)
   usersStackProd.addDependency(storageStackProd)
 
   const networkStackProd = new NetworkStack(app, `${stackEnvPropsProd.appName}-NetworkStack-${stackEnvPropsProd.envName}`, stackEnvPropsProd)

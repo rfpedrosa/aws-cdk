@@ -19,13 +19,36 @@ export class StorageStack extends Stack {
       }
     })
 
-    this.appBucket = new s3.Bucket(this, `${props.appName}-${props.envName}-s3`, {
-      // avoid bucket name collision using unique ids:
-      // https://docs.aws.amazon.com/cdk/latest/guide/identifiers.html#identifiers_unique_ids
-      bucketName: `${props.appName}-${props.envName}-${this.node.addr}`,
+    this.appBucket = new s3.Bucket(this, `${props.appName}-${props.envName}`, {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: IsProd(props) ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
-      encryption: s3.BucketEncryption.KMS_MANAGED
+      autoDeleteObjects: !IsProd(props),
+      encryption: s3.BucketEncryption.KMS_MANAGED,
+      // https://docs.amplify.aws/lib/storage/getting-started/q/platform/js#amazon-s3-bucket-cors-policy-setup
+      cors: [
+        {
+          allowedHeaders: [
+            '*'
+          ],
+          allowedMethods: [
+            s3.HttpMethods.DELETE,
+            s3.HttpMethods.GET,
+            s3.HttpMethods.HEAD,
+            s3.HttpMethods.POST,
+            s3.HttpMethods.PUT
+          ],
+          allowedOrigins: [
+            '*'
+          ],
+          exposedHeaders: [
+            'x-amz-server-side-encryption',
+            'x-amz-request-id',
+            'x-amz-id-2',
+            'ETag'
+          ],
+          maxAge: 3000
+        }
+      ]
     })
   }
 }

@@ -14,23 +14,24 @@ const app = new cdk.App({
   }
 })
 
+const storageStack = new StorageStack(app, 'MyStorageStack', {
+  account: 'XXX',
+  region: 'us-east-1',
+  envName: 'prod',
+  appName: 'my-app',
+  fullname: 'Blu Sky Link'
+})
+
 const authenticationStack = new AuthenticationStack(app, 'MyAuthenticationStack', {
   account: 'XXX',
   region: 'us-east-1',
   envName: 'prod',
   appName: 'my-app',
-  fullname: 'My App'
+  fullname: 'My App',
+  appBucket: storageStack.appBucket
 })
 
 const networkStack = new NetworkStack(app, 'MyNetworkStack', {
-  account: 'XXX',
-  region: 'us-east-1',
-  envName: 'prod',
-  appName: 'my-app',
-  fullname: 'My App'
-})
-
-const storageStack = new StorageStack(app, 'MyStorageStack', {
   account: 'XXX',
   region: 'us-east-1',
   envName: 'prod',
@@ -165,12 +166,21 @@ test('throw error if any client callback url ends with slash', () => {
     }
   })
 
+  const storageStack = new StorageStack(app, 'MyStorageStack', {
+    account: 'XXX',
+    region: 'us-east-1',
+    envName: 'prod',
+    appName: 'my-app',
+    fullname: 'Blu Sky Link'
+  })
+
   const authenticationStack = new AuthenticationStack(app, 'AuthenticationStack', {
     account: 'XXX',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
-    fullname: 'My App'
+    fullname: 'My App',
+    appBucket: storageStack.appBucket
   })
 
   const networkStack = new NetworkStack(app, 'MyNetworkStack', {

@@ -1,14 +1,17 @@
 import { Stack, Construct, Duration } from '@aws-cdk/core'
 import * as cognito from '@aws-cdk/aws-cognito'
-import { IEnvProps } from './shared/IEnvProps'
+import * as iam from '@aws-cdk/aws-iam'
+import { IAuthenticationStackEnvProps } from './IAuthenticationStackEnvProps'
 import { IsProd } from './shared/Environment'
 import { AccountRecovery, UserPoolClientIdentityProvider } from '@aws-cdk/aws-cognito'
+import { ICognitoDefaultAuthenticatedRole } from './ICognitoDefaultAuthenticatedRole'
+import { CognitoDefaultAuthenticatedRole } from './CognitoDefaultAuthenticatedRole'
 
 export class AuthenticationStack extends Stack {
   public readonly userPool: cognito.IUserPool
   public readonly apiClient: cognito.IUserPoolClient
 
-  constructor (scope: Construct, id: string, props: IEnvProps) {
+  constructor (scope: Construct, id: string, props: IAuthenticationStackEnvProps) {
     super(scope, id, {
       env: {
         account: props.account,
@@ -21,7 +24,7 @@ export class AuthenticationStack extends Stack {
     })
 
     // Cognito
-    this.userPool = new cognito.UserPool(this, `${props.appName}-${props.envName}-userpool`, {
+    const userPool = new cognito.UserPool(this, `${props.appName}-${props.envName}-userpool`, {
       userPoolName: `${props.appName}-${props.envName}-userpool`,
       selfSignUpEnabled: true,
       signInCaseSensitive: false,
@@ -71,6 +74,8 @@ export class AuthenticationStack extends Stack {
         replyTo: 'support@myawesomeapp.com',
       }, */
     })
+
+    this.userPool = userPool
 
     if (IsProd(props)) {
       // eslint-disable-next-line no-new
@@ -141,7 +146,8 @@ export class AuthenticationStack extends Stack {
         callbackUrls: webCallbackUrls.split(','),
         logoutUrls: webLogoutUrls.split(',')
       },
-      preventUserExistenceErrors: true
+      preventUserExistenceErrors: true,
+      generateSecret: false // Don't need to generate secret for web app running on browsers
     })
 
     // Get the AWS CloudFormation resource
@@ -212,5 +218,32 @@ export class AuthenticationStack extends Stack {
       description: 'Has access to the the Admin section of the app where they will manage users, facilities, view the schedule, and view reports.',
       precedence: 10
     })
+
+    const identityPool = new cognito.CfnIdentityPool(this, `${props.appName}-${props.envName}-identitypool`, {
+      allowUnauthenticatedIdentities: false,
+      cognitoIdentityProviders: [{
+        clientId: webClient.userPoolClientId,
+        providerName: userPool.userPoolProviderName
+      }]
+    })
+
+    const authenticatedRoleEnvProps: ICognitoDefaultAuthenticatedRole = {
+      ...props,
+      identityPool: identityPool
+    }
+    const authenticatedRole = new CognitoDefaultAuthenticatedRole(this, `${props.appName}-${props.envName}-CognitoAuthRole`, authenticatedRoleEnvProps)
+
+    authenticatedRole.role.addToPolicy(
+      // IAM policy granting users permission to a specific folder in the S3 bucket
+      new iam.PolicyStatement({
+        actions: ['s3:*'],
+        effect: iam.Effect.ALLOW,
+        resources: [
+          `${props.appBucket.bucketArn}/private/*`,
+          `${props.appBucket.bucketArn}/protected/*`,
+          `${props.appBucket.bucketArn}/public/*`
+        ]
+      })
+    )
   }
 }
