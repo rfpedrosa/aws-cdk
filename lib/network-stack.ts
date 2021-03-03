@@ -90,6 +90,8 @@ export class NetworkStack extends Stack {
 
       subnetConfiguration: subnetConfiguration,
 
+      // NAT Gateway has costs. Even for production, it is possible to save money by putting applicaion later in the public subnet
+      // see AssociatePublicIpAddress on https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html#command-options-general-ec2vpc
       // Based on: https://docs.aws.amazon.com/cdk/api/latest/docs/aws-ec2-readme.html#subnet-types
       // "If you would like to save on the cost of NAT gateways, you can use isolated subnets instead of private subnets (as described in Advanced Subnet Configuration).
       // If you need private instances to have internet connectivity, another option is to reduce the number of NAT gateways created by setting the natGateways property to a lower value

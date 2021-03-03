@@ -6,6 +6,7 @@ import { StorageStack } from '../lib/storage-stack'
 test('User pool created as case insensitive', () => {
   const app = new cdk.App({
     context: {
+      'XXX:dev:userpool:webclient:domain': 'http://localhost:3000',
       'XXX:dev:userpool:webclient:callbackUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com',
       'XXX:dev:userpool:webclient:logoutUrls': 'http://localhost:3000/login,https://your_friendly_test_subdomain.com/login'
     }

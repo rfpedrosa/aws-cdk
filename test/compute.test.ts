@@ -9,6 +9,7 @@ import { AuthenticationStack } from '../lib/authentication-stack'
 
 const app = new cdk.App({
   context: {
+    'XXX:prod:userpool:webclient:domain': 'http://localhost:3000',
     'XXX:prod:userpool:webclient:callbackUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com',
     'XXX:prod:userpool:webclient:logoutUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com/login'
   }

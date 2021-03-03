@@ -9,3 +9,7 @@ cdk.out
 
 # Parcel default cache directory
 .parcel-cache
+
+#custom js exception
+!cognito-pre-sign-up.js
+!cognito-post-authentication.js

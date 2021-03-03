@@ -4,6 +4,7 @@ import * as iam from '@aws-cdk/aws-iam'
 import * as cognito from '@aws-cdk/aws-cognito'
 import { ICognitoDefaultAuthenticatedRole } from './ICognitoDefaultAuthenticatedRole'
 
+// based on https://serverless-stack.com/chapters/configure-cognito-identity-pool-in-cdk.html
 export class CognitoDefaultAuthenticatedRole extends cdk.Construct {
   // Public reference to the IAM role
   public readonly role: iam.Role

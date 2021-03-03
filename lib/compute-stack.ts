@@ -46,6 +46,13 @@ export class ComputeStack extends Stack {
         value: 'aws-elasticbeanstalk-ec2-role'
       },
       {
+        namespace: 'aws:ec2:instances',
+        optionName: 'InstanceTypes',
+        value: IsProd(props)
+          ? 't3.medium'
+          : 't2.micro'
+      },
+      {
         namespace: 'aws:ec2:vpc',
         optionName: 'VPCId',
         value: props.vpc.vpcId
@@ -115,10 +122,32 @@ export class ComputeStack extends Stack {
         value: props.rdsCredentialsSecretArn
       },
       {
-        namespace: 'aws:elasticbeanstalk:application:environment',
-        optionName: 'AWS__s3__BucketName',
-        value: props.appBucket.bucketName
+        namespace: 'aws:elasticbeanstalk:xray',
+        optionName: 'XRayEnabled',
+        value: IsProd(props) ? 'true' : 'false'
+      },
+      {
+        namespace: 'aws:elasticbeanstalk:cloudwatch:logs',
+        optionName: 'StreamLogs',
+        value: 'true'
+      },
+      {
+        namespace: 'aws:elasticbeanstalk:cloudwatch:logs',
+        optionName: 'RetentionInDays',
+        value: IsProd(props) ? '30' : '7'
+      },
+      {
+        namespace: 'aws:elasticbeanstalk:hostmanager',
+        optionName: 'LogPublicationControl',
+        value: IsProd(props) ? 'true' : 'false'
       }
+      /*
+      {
+        namespace: 'aws:autoscaling:asg',
+        optionName: 'MaxSize',
+        value: '1' // do not autoscale in non prod environment
+      }
+      */
     ]
 
     const webCallbackUrls = this.node.tryGetContext(`${props.account}:${props.envName}:userpool:webclient:callbackUrls`)
@@ -134,20 +163,6 @@ export class ComputeStack extends Stack {
         value: element
       })
     })
-
-    if (IsProd(props)) {
-      options.push({
-        namespace: 'aws:elasticbeanstalk:xray',
-        optionName: 'XRayEnabled',
-        value: 'true'
-      })
-    } else {
-      options.push({
-        namespace: 'aws:autoscaling:asg',
-        optionName: 'MaxSize',
-        value: '1' // do not autoscale in non prod environment
-      })
-    }
 
     const sslCertificateArns = this.node.tryGetContext(`${props.account}:${props.envName}:aws:elbv2:listener:443:SSLCertificateArns`)
     if (sslCertificateArns) {
@@ -174,7 +189,7 @@ export class ComputeStack extends Stack {
     const env = new elasticbeanstalk.CfnEnvironment(this, `${appName}-eb-${props.envName}`, {
       environmentName: `${appName}-${props.envName}`,
       applicationName: appName,
-      solutionStackName: '64bit Amazon Linux 2 v2.1.1 running .NET Core',
+      solutionStackName: '64bit Amazon Linux 2 v2.1.2 running .NET Core',
       optionSettings: options
     })
 

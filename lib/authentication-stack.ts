@@ -1,11 +1,13 @@
 import { Stack, Construct, Duration } from '@aws-cdk/core'
 import * as cognito from '@aws-cdk/aws-cognito'
+import * as lambda from '@aws-cdk/aws-lambda'
 import * as iam from '@aws-cdk/aws-iam'
 import { IAuthenticationStackEnvProps } from './IAuthenticationStackEnvProps'
 import { IsProd } from './shared/Environment'
-import { AccountRecovery, UserPoolClientIdentityProvider } from '@aws-cdk/aws-cognito'
 import { ICognitoDefaultAuthenticatedRole } from './ICognitoDefaultAuthenticatedRole'
 import { CognitoDefaultAuthenticatedRole } from './CognitoDefaultAuthenticatedRole'
+import { AccountRecovery, UserPoolClientIdentityProvider } from '@aws-cdk/aws-cognito'
+import { readFileSync } from 'fs'
 
 export class AuthenticationStack extends Stack {
   public readonly userPool: cognito.IUserPool
@@ -24,6 +26,36 @@ export class AuthenticationStack extends Stack {
     })
 
     // Cognito
+    const preSignUpLambda = new lambda.Function(this, `${props.appName}-${props.envName}-CognitoPreSignUp`, {
+      functionName: `${props.appName}-${props.envName}-CognitoPreSignUp`,
+      code: new lambda.AssetCode('src'),
+      handler: 'cognito-pre-sign-up.handler',
+      runtime: lambda.Runtime.NODEJS_12_X,
+      description: 'Link google login to an existent user in the user pool',
+      timeout: Duration.seconds(10)
+    })
+    preSignUpLambda.role?.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonCognitoPowerUser'))
+
+    const postAuthenticationLambda = new lambda.Function(this, `${props.appName}-${props.envName}-CognitoPostAuthentication`, {
+      functionName: `${props.appName}-${props.envName}-CognitoPostAuthentication`,
+      code: new lambda.AssetCode('src'),
+      handler: 'cognito-post-authentication.handler',
+      runtime: lambda.Runtime.NODEJS_12_X,
+      description: 'Always mark email as verified if needed',
+      timeout: Duration.seconds(10)
+    })
+    postAuthenticationLambda.role?.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonCognitoPowerUser'))
+
+    const webClientDomain = this.node.tryGetContext(`${props.account}:${props.envName}:userpool:webclient:domain`)
+
+    const cognitoUserInvitationEmailTemplateHtml = readFileSync('./assets/cognito-user-invitation-template.html', 'utf-8')
+      .replace(/{webClientDomain}/g, webClientDomain)
+      .replace(/{app:fullname}/g, props.fullname)
+
+    const cognitoUserVerificationEmailTemplateHtml = readFileSync('./assets/cognito-user-verification-template.html', 'utf-8')
+      .replace(/{webClientDomain}/g, webClientDomain)
+      .replace(/{app:fullname}/g, props.fullname)
+
     const userPool = new cognito.UserPool(this, `${props.appName}-${props.envName}-userpool`, {
       userPoolName: `${props.appName}-${props.envName}-userpool`,
       selfSignUpEnabled: true,
@@ -31,7 +63,7 @@ export class AuthenticationStack extends Stack {
       accountRecovery: AccountRecovery.EMAIL_AND_PHONE_WITHOUT_MFA,
       userInvitation: {
         emailSubject: `Invite to join our ${props.fullname}!`,
-        emailBody: `Hello {username}, you have been invited to join our ${props.fullname}! Your temporary password is {####}`,
+        emailBody: cognitoUserInvitationEmailTemplateHtml,
         smsMessage: `Hello {username}, you have been invited to join our ${props.fullname}! Your temporary password is {####}`
       },
       signInAliases: {
@@ -50,8 +82,8 @@ export class AuthenticationStack extends Stack {
       // "Cognito recommends that email and phone number be automatically verified, if they are one of the sign in methods for the user pool.
       // The CDK does this by default, when email and/or phone number are specified as part of signInAliases"
       userVerification: {
-        emailSubject: `Verify your email for ${props.fullname} app!`,
-        emailBody: `Hello {username}, Thanks for signing up to our ${props.fullname} app! Your verification code is {####}`,
+        emailSubject: `Set a new password on ${props.fullname} portal`,
+        emailBody: cognitoUserVerificationEmailTemplateHtml,
         emailStyle: cognito.VerificationEmailStyle.CODE,
         smsMessage: `Hello {username}, Thanks for signing up to our ${props.fullname} app! Your verification code is {####}`
       },
@@ -67,6 +99,10 @@ export class AuthenticationStack extends Stack {
       mfaSecondFactor: {
         sms: true,
         otp: true
+      },
+      lambdaTriggers: {
+        preSignUp: preSignUpLambda,
+        postAuthentication: postAuthenticationLambda
       }
       // TODO set emails: https://docs.aws.amazon.com/cdk/api/latest/docs/aws-cognito-readme.html#emails and use AWS SES: https://github.com/aws/aws-cdk/issues/6768
       /* emailSettings: {
