@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import * as cdk from '@aws-cdk/core'
+import { App } from 'aws-cdk-lib';
 import { NetworkStack } from '../lib/network-stack'
 import { IAuthenticationStackEnvProps } from '../lib/IAuthenticationStackEnvProps'
 import { AuthenticationStack } from '../lib/authentication-stack'
@@ -12,7 +12,7 @@ import { StorageStack } from '../lib/storage-stack'
 import { IEnvProps } from '../lib/shared/IEnvProps'
 import { UsersStack } from '../lib/users-stack'
 
-const app = new cdk.App()
+const app = new App()
 
 const name = app.node.tryGetContext('app:name')
 const fullname = app.node.tryGetContext('app:fullname')

@@ -1,12 +1,12 @@
-import { Stack, Construct, Duration } from '@aws-cdk/core'
-import * as cognito from '@aws-cdk/aws-cognito'
-import * as lambda from '@aws-cdk/aws-lambda'
-import * as iam from '@aws-cdk/aws-iam'
+import { Construct } from 'constructs';
+import { Stack, Duration } from 'aws-cdk-lib';
+import { aws_cognito as cognito } from 'aws-cdk-lib';
+import { aws_lambda as lambda } from 'aws-cdk-lib'; 
+import { aws_iam as iam } from 'aws-cdk-lib';
 import { IAuthenticationStackEnvProps } from './IAuthenticationStackEnvProps'
 import { IsProd } from './shared/Environment'
 import { ICognitoDefaultAuthenticatedRole } from './ICognitoDefaultAuthenticatedRole'
 import { CognitoDefaultAuthenticatedRole } from './CognitoDefaultAuthenticatedRole'
-import { AccountRecovery, UserPoolClientIdentityProvider } from '@aws-cdk/aws-cognito'
 import { readFileSync } from 'fs'
 
 export class AuthenticationStack extends Stack {
@@ -60,7 +60,7 @@ export class AuthenticationStack extends Stack {
       userPoolName: `${props.appName}-${props.envName}-userpool`,
       selfSignUpEnabled: true,
       signInCaseSensitive: false,
-      accountRecovery: AccountRecovery.EMAIL_AND_PHONE_WITHOUT_MFA,
+      accountRecovery: cognito.AccountRecovery.EMAIL_AND_PHONE_WITHOUT_MFA,
       userInvitation: {
         emailSubject: `Invite to join our ${props.fullname}!`,
         emailBody: cognitoUserInvitationEmailTemplateHtml,
@@ -191,7 +191,7 @@ export class AuthenticationStack extends Stack {
     const cfnUserPoolWebClient = webClient.node.defaultChild as cognito.CfnUserPoolClient
     // Change its properties
     cfnUserPoolWebClient.supportedIdentityProviders = [
-      UserPoolClientIdentityProvider.COGNITO.name
+      cognito.UserPoolClientIdentityProvider.COGNITO.name
       // 'Google'
     ]
     // cfnUserPoolWebClient.addDependsOn(cfnGoogleProvider)

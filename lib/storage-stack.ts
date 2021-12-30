@@ -1,6 +1,6 @@
-
-import { Stack, Construct, RemovalPolicy } from '@aws-cdk/core'
-import * as s3 from '@aws-cdk/aws-s3'
+import { Construct } from 'constructs';
+import { Stack, RemovalPolicy } from 'aws-cdk-lib';
+import { aws_s3 as s3 } from 'aws-cdk-lib';
 import { IEnvProps } from './shared/IEnvProps'
 import { IsProd } from './shared/Environment'
 

@@ -1,5 +1,6 @@
-import { Stack, Construct, CfnOutput } from '@aws-cdk/core'
-import * as iam from '@aws-cdk/aws-iam'
+import { Construct } from 'constructs';
+import { Stack, CfnOutput } from 'aws-cdk-lib';
+import { aws_iam as iam } from 'aws-cdk-lib';
 import { IUsersStackEnvProps } from './IUsersStackEnvProps'
 import { IsProd } from './shared/Environment'
 

@@ -1,5 +1,6 @@
-import { Stack, Construct } from '@aws-cdk/core'
-import * as elasticbeanstalk from '@aws-cdk/aws-elasticbeanstalk'
+import { Construct } from 'constructs';
+import { Stack } from 'aws-cdk-lib';
+import { aws_elasticbeanstalk as elasticbeanstalk } from 'aws-cdk-lib';
 import { IComputeStackEnvProps } from './IComputeStackEnvProps'
 import { IsProd } from './shared/Environment'
 
@@ -189,7 +190,7 @@ export class ComputeStack extends Stack {
     const env = new elasticbeanstalk.CfnEnvironment(this, `${appName}-eb-${props.envName}`, {
       environmentName: `${appName}-${props.envName}`,
       applicationName: appName,
-      solutionStackName: '64bit Amazon Linux 2 v2.1.2 running .NET Core',
+      solutionStackName: '64bit Amazon Linux 2 v2.2.9 running .NET Core',
       optionSettings: options
     })
 

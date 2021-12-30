@@ -1,17 +1,17 @@
 import { IEnvProps } from './shared/IEnvProps'
-import { CfnApplication } from '@aws-cdk/aws-elasticbeanstalk'
-import { IVpc } from '@aws-cdk/aws-ec2'
-import { IBucket } from '@aws-cdk/aws-s3'
-import { IUserPool, IUserPoolClient } from '@aws-cdk/aws-cognito'
-import { CfnOutput } from '@aws-cdk/core'
+import { CfnOutput } from 'aws-cdk-lib';
+import { aws_elasticbeanstalk as elasticbeanstalk } from 'aws-cdk-lib';
+import { aws_ec2 as ec2 } from 'aws-cdk-lib';
+import { aws_cognito as cognito } from 'aws-cdk-lib';
+import { aws_s3 as s3 } from 'aws-cdk-lib';
 
 export interface IComputeStackEnvProps extends IEnvProps {
-  app?: CfnApplication
-  vpc: IVpc,
-  userPool: IUserPool,
-  apiClient: IUserPoolClient,
+  app?: elasticbeanstalk.CfnApplication
+  vpc: ec2.IVpc,
+  userPool: cognito.IUserPool,
+  apiClient: cognito.IUserPoolClient,
   accessKeyId: CfnOutput,
   secretAccessKey: CfnOutput,
   rdsCredentialsSecretArn?: string,
-  appBucket: IBucket
+  appBucket: s3.IBucket
 }
