@@ -1,5 +1,5 @@
 import { expect as expectCDK, haveResourceLike, arrayWith, objectLike } from '@aws-cdk/assert'
-import * as cdk from '@aws-cdk/core'
+import { App } from 'aws-cdk-lib';
 import { DatabaseStack } from '../lib/database-stack'
 import { NetworkStack } from '../lib/network-stack'
 import { UsersStack } from '../lib/users-stack'
@@ -7,16 +7,16 @@ import { ComputeStack } from '../lib/compute-stack'
 import { StorageStack } from '../lib/storage-stack'
 import { AuthenticationStack } from '../lib/authentication-stack'
 
-const app = new cdk.App({
+const app = new App({
   context: {
-    'XXX:prod:userpool:webclient:domain': 'http://localhost:3000',
-    'XXX:prod:userpool:webclient:callbackUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com',
-    'XXX:prod:userpool:webclient:logoutUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com/login'
+    'xxx:prod:userpool:webclient:domain': 'http://localhost:3000',
+    'xxx:prod:userpool:webclient:callbackUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com',
+    'xxx:prod:userpool:webclient:logoutUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com/login'
   }
 })
 
 const storageStack = new StorageStack(app, 'MyStorageStack', {
-  account: 'XXX',
+  account: 'xxx',
   region: 'us-east-1',
   envName: 'prod',
   appName: 'my-app',
@@ -24,7 +24,7 @@ const storageStack = new StorageStack(app, 'MyStorageStack', {
 })
 
 const authenticationStack = new AuthenticationStack(app, 'MyAuthenticationStack', {
-  account: 'XXX',
+  account: 'xxx',
   region: 'us-east-1',
   envName: 'prod',
   appName: 'my-app',
@@ -33,7 +33,7 @@ const authenticationStack = new AuthenticationStack(app, 'MyAuthenticationStack'
 })
 
 const networkStack = new NetworkStack(app, 'MyNetworkStack', {
-  account: 'XXX',
+  account: 'xxx',
   region: 'us-east-1',
   envName: 'prod',
   appName: 'my-app',
@@ -41,7 +41,7 @@ const networkStack = new NetworkStack(app, 'MyNetworkStack', {
 })
 
 const usersStack = new UsersStack(app, 'MyUserStack', {
-  account: 'XXX',
+  account: 'xxx',
   region: 'us-east-1',
   envName: 'prod',
   appName: 'my-app',
@@ -50,7 +50,7 @@ const usersStack = new UsersStack(app, 'MyUserStack', {
 })
 
 const databaseStack = new DatabaseStack(app, 'MyDbStack', {
-  account: 'XXX',
+  account: 'xxx',
   region: 'us-east-1',
   envName: 'prod',
   appName: 'my-app',
@@ -60,7 +60,7 @@ const databaseStack = new DatabaseStack(app, 'MyDbStack', {
 
 test('EB has DB connection string as environment variable', () => {
   const computeStack = new ComputeStack(app, 'MyComputeStack1', {
-    account: 'XXX',
+    account: 'xxx',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
@@ -86,7 +86,7 @@ test('EB has DB connection string as environment variable', () => {
 
 test('Production envrionemnt has ASPNETCORE_ENVIRONMENT as Production', () => {
   const computeStack = new ComputeStack(app, 'MyComputeStack2', {
-    account: 'XXX',
+    account: 'xxx',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
@@ -113,7 +113,7 @@ test('Production envrionemnt has ASPNETCORE_ENVIRONMENT as Production', () => {
 
 test('Production envrionemnt has ShowPII environment variable as false', () => {
   const computeStack = new ComputeStack(app, 'MyComputeStack3', {
-    account: 'XXX',
+    account: 'xxx',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
@@ -143,7 +143,7 @@ test('throw error if rds secret is undefined', () => {
   expect(() => {
     // eslint-disable-next-line no-new
     new ComputeStack(app, 'MyComputeStack', {
-      account: 'XXX',
+      account: 'xxx',
       region: 'us-east-1',
       envName: 'prod',
       appName: 'my-app',
@@ -160,15 +160,15 @@ test('throw error if rds secret is undefined', () => {
 })
 
 test('throw error if any client callback url ends with slash', () => {
-  const app = new cdk.App({
+  const app = new App({
     context: {
-      'XXX:prod:userpool:webclient:callbackUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com/',
-      'XXX:prod:userpool:webclient:logoutUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com/login'
+      'xxx:prod:userpool:webclient:callbackUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com/',
+      'xxx:prod:userpool:webclient:logoutUrls': 'http://localhost:3000,https://your_friendly_test_subdomain.com/login'
     }
   })
 
   const storageStack = new StorageStack(app, 'MyStorageStack', {
-    account: 'XXX',
+    account: 'xxx',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
@@ -176,7 +176,7 @@ test('throw error if any client callback url ends with slash', () => {
   })
 
   const authenticationStack = new AuthenticationStack(app, 'AuthenticationStack', {
-    account: 'XXX',
+    account: 'xxx',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
@@ -185,7 +185,7 @@ test('throw error if any client callback url ends with slash', () => {
   })
 
   const networkStack = new NetworkStack(app, 'MyNetworkStack', {
-    account: 'XXX',
+    account: 'xxx',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
@@ -193,7 +193,7 @@ test('throw error if any client callback url ends with slash', () => {
   })
 
   const usersStack = new UsersStack(app, 'MyUserStack', {
-    account: 'XXX',
+    account: 'xxx',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
@@ -202,7 +202,7 @@ test('throw error if any client callback url ends with slash', () => {
   })
 
   const databaseStack = new DatabaseStack(app, 'MyDbStack', {
-    account: 'XXX',
+    account: 'xxx',
     region: 'us-east-1',
     envName: 'prod',
     appName: 'my-app',
@@ -214,7 +214,7 @@ test('throw error if any client callback url ends with slash', () => {
   expect(() => {
     // eslint-disable-next-line no-new
     new ComputeStack(app, 'MyComputeStack', {
-      account: 'XXX',
+      account: 'xxx',
       region: 'us-east-1',
       envName: 'prod',
       appName: 'my-app',

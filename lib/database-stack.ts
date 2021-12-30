@@ -1,6 +1,7 @@
-import { Construct, Duration, Stack, RemovalPolicy } from '@aws-cdk/core'
-import * as rds from '@aws-cdk/aws-rds'
-import * as ec2 from '@aws-cdk/aws-ec2'
+import { Construct } from 'constructs';
+import { Duration, Stack, RemovalPolicy } from 'aws-cdk-lib';
+import { aws_rds as rds } from 'aws-cdk-lib';
+import { aws_ec2 as ec2 } from 'aws-cdk-lib';
 import { IDatabaseStackEnvProps } from './IDatabaseStackEnvProps'
 import { IsProd } from './shared/Environment'
 

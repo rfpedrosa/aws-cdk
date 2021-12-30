@@ -1,12 +1,12 @@
 import { expect as expectCDK, haveResource, beASupersetOfTemplate } from '@aws-cdk/assert'
-import * as cdk from '@aws-cdk/core'
+import { App } from 'aws-cdk-lib';
 import { DatabaseStack } from '../lib/database-stack'
 import { NetworkStack } from '../lib/network-stack'
 
-const app = new cdk.App()
+const app = new App()
 
 const networkStack = new NetworkStack(app, 'MyNetworkStack', {
-  account: 'XXX',
+  account: 'xxx',
   region: 'us-east-1',
   envName: 'prod',
   fullname: 'My App',
@@ -14,7 +14,7 @@ const networkStack = new NetworkStack(app, 'MyNetworkStack', {
 })
 
 const databaseStack = new DatabaseStack(app, 'MyDbStack', {
-  account: 'XXX',
+  account: 'xxx',
   region: 'us-east-1',
   envName: 'prod',
   appName: 'my-app',

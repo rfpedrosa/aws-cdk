@@ -7,7 +7,6 @@
     "app:prodAwsRegion": "us-east-1",
     "app:nonProdAwsAccountNumber": "615275706179",
     "app:nonProdAwsRegion": "us-east-1",
-    "@aws-cdk/core:enableStackNameDuplicates": "true",
     "aws-cdk:enableDiffNoFail": "true",
     "615275706179:dev:userpool:webclient:domain": "http://localhost:3000",
     "615275706179:dev:userpool:webclient:callbackUrls": "http://localhost:3000",

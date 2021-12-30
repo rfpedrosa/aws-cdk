@@ -1,6 +1,7 @@
 // https://docs.aws.amazon.com/cdk/api/latest/docs/aws-ec2-readme.html#sharing-vpcs-between-stacks
-import { Stack, Construct } from '@aws-cdk/core'
-import * as ec2 from '@aws-cdk/aws-ec2'
+import { Construct } from 'constructs';
+import { Stack } from 'aws-cdk-lib';
+import { aws_ec2 as ec2 } from 'aws-cdk-lib';
 import { IEnvProps } from './shared/IEnvProps'
 import { IsProd } from './shared/Environment'
 

@@ -1,11 +1,10 @@
-import { Construct } from '@aws-cdk/core'
-import * as cdk from '@aws-cdk/core'
-import * as iam from '@aws-cdk/aws-iam'
-import * as cognito from '@aws-cdk/aws-cognito'
+import { Construct } from 'constructs';
+import { aws_cognito as cognito } from 'aws-cdk-lib';
+import { aws_iam as iam } from 'aws-cdk-lib';
 import { ICognitoDefaultAuthenticatedRole } from './ICognitoDefaultAuthenticatedRole'
 
 // based on https://serverless-stack.com/chapters/configure-cognito-identity-pool-in-cdk.html
-export class CognitoDefaultAuthenticatedRole extends cdk.Construct {
+export class CognitoDefaultAuthenticatedRole extends Construct {
   // Public reference to the IAM role
   public readonly role: iam.Role
 
